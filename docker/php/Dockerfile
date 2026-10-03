@@ -8,5 +8,9 @@ RUN apt-get update \
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/app.ini
+COPY --chmod=755 docker/php/entrypoint.sh /usr/local/bin/app-entrypoint
 
 WORKDIR /var/www/html
+
+ENTRYPOINT ["app-entrypoint"]
+CMD ["php-fpm"]

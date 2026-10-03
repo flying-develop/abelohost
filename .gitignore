@@ -2,6 +2,7 @@
 /vendor/
 /node_modules/
 /public/build/
+/public/data/
 /var/smarty/*
 !/var/smarty/.gitkeep
 /.idea/
@@ -9,4 +10,5 @@
 /.codex/
 /.agents/
 /.ai-factory.json
+/.ai-factory
 *.log

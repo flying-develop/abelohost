@@ -1,37 +1,38 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
+## Обзор и структура
 
-This is a plain PHP blog scaffold using PHP 8.4, MySQL 8.4, and Smarty 5, without frameworks. `public/index.php` is the entry point. `templates/` holds Smarty templates; `var/smarty/` stores private generated compilation and cache files. `src/` is reserved for JavaScript, SCSS, and images. Vite generates `public/build/`; never edit that directory directly.
+Блог на PHP 8.4, MySQL 8.4 и Smarty 5 без фреймворков. `public/index.php` — точка входа, `templates/` — шаблоны, `var/smarty/` — приватные генерируемые файлы. PHP-слои будущих этапов размещаются в `app/`; пока они не созданы.
 
-Docker configuration lives in `docker/` and `docker-compose.yml`. MySQL data belongs outside the project, at `../abelo-storage/mysql` by default. Requirements, development stages, and setup instructions are in `README.md`. Blog features and database tables are planned for later stages.
+`src/js`, `src/scss`, `src/images` содержат ресурсы дизайна; Vite собирает их в `public/build`. Изображения контента находятся в `src/data/articles`; PHP-entrypoint копирует их в `public/data/articles`. Публичные копии исключены из Git и сохраняются при сборке дизайна.
 
-## Build, Test, and Development Commands
+`docker/mysql/initdb/` содержит однократные SQL-скрипты схемы и наполнения: три категории и девять статей. MySQL хранит данные вне проекта, по умолчанию в `../abelo-storage/mysql`. Полное ТЗ, команды запуска, импорта и проверки находятся в `README.md`.
 
-Copy `.env.example` to `.env`, configure credentials and UID/GID, and create the external MySQL directory before starting.
+## Команды разработки
 
-- `docker compose build php-fpm`: build PHP with Composer and required extensions.
-- `docker compose run --rm --no-deps php-fpm composer install`: install PHP dependencies.
-- `docker compose run --rm --no-deps node npm install`: install frontend dependencies and generate the initial npm lock-file; use `npm ci` once the lock-file exists.
-- `docker compose run --rm --no-deps node npm run build`: clean and rebuild public resources.
-- `docker compose run --rm --no-deps node npm run watch`: rebuild resources on changes; refresh the browser manually.
-- `docker compose up -d`: start the site at `http://localhost:8080`.
+- `docker compose build php-fpm`: собрать PHP с Composer, расширениями и entrypoint.
+- `docker compose run --rm --no-deps php-fpm composer install`: установить PHP-зависимости.
+- `docker compose run --rm --no-deps node npm ci`: установить JS-зависимости из lock-файла.
+- `docker compose run --rm --no-deps node npm run build`: очистить и собрать ресурсы дизайна.
+- `docker compose run --rm --no-deps node npm run watch`: пересобирать ресурсы при изменениях.
+- `docker compose up -d`: запустить сайт на `http://localhost:8080`.
+- `docker compose restart php-fpm`: обновить публичные копии изображений контента.
 
-## Coding Style & Naming Conventions
+Создайте `.env` из примера и внешний каталог MySQL перед первым запуском. SQL-инициализация выполняется только для нового хранилища; существующая БД требует однократного импорта из README.
 
-Follow the mandatory rules below: tabs in code, Russian comments and PHPDoc, descriptive names, PascalCase classes, and camelCase methods. YAML requires spaces for indentation. Keep implementation simple; do not introduce frameworks. No formatter or linter is configured yet.
+## Стиль и архитектура
 
-## Testing Guidelines
+Соблюдайте обязательные правила ниже: табуляция в коде, русские комментарии и PHPDoc, PascalCase классы, camelCase методы. В YAML нужны пробелы. SQL использует snake_case и стандартные одинарные кавычки строк. Форматтер и тестовый фреймворк пока не настроены.
 
-No test framework or coverage threshold is configured. Validate Compose with `docker compose config --quiet`, validate Composer, and run `php -l public/index.php` in the PHP container. Verify Smarty rendering, Bootstrap interaction, Vite build/watch, PDO connectivity, and database persistence using `README.md`. Clearly report checks blocked by the environment.
+Выбраны простые слои: контроллер → сервис → репозиторий → PDO. Не создавайте будущие классы заранее.
 
-## Commit & Pull Request Guidelines
+## Проверки
 
-Use focused, imperative commits for each completed stage, for example `Add Docker environment and application scaffold`. Describe behavior, linked requirements, verification results, and unavailable checks in pull requests. Include screenshots for UI changes. Keep dependency lock-files in Git; never invent a lock-file when dependency resolution is unavailable.
+Проверяйте Compose, синтаксис PHP и shell, сборку дизайна, копирование контента и сохранность изображений после build. Схему, связи, транзакции и данные проверяйте на MySQL 8.4. Недоступные проверки явно отмечайте; статическая проверка SQL не заменяет запуск на MySQL.
 
-## Security & Configuration
+## Git и конфигурация
 
-Never commit `.env`, credentials, dependencies, generated resources, or Smarty cache. Serve only `public/`. Use parameterized PDO queries and context-appropriate output escaping for future blog features. Keep the AI-use disclosure in `README.md` accurate as work progresses.
+Все операции записи в Git выполняет пользователь. Агент не меняет ветки, индекс и коммиты, не выполняет pull/push и другие операции записи. Разрешены проверки без изменения состояния. Не включайте `.env`, зависимости, кеш и публичные копии в Git; исходники контента и lock-файлы должны оставаться доступными для включения пользователем.
 
 # AGENTS.md — правила для AI-агентов (Codex)
 

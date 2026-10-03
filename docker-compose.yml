@@ -30,6 +30,7 @@ services:
 
   mysql:
     image: mysql:8.4
+    command: ["mysqld", "--default-time-zone=+00:00"]
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:?Set DB_DATABASE in .env}
       MYSQL_USER: ${DB_USERNAME:?Set DB_USERNAME in .env}
@@ -39,6 +40,13 @@ services:
       - type: bind
         source: ${MYSQL_STORAGE_PATH:-../abelo-storage/mysql}
         target: /var/lib/mysql
+        bind:
+          create_host_path: false
+          propagation: rprivate
+      - type: bind
+        source: ./docker/mysql/initdb
+        target: /docker-entrypoint-initdb.d
+        read_only: true
         bind:
           create_host_path: false
           propagation: rprivate
