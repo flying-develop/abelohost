@@ -147,3 +147,41 @@ a:focus-visible {
 .error-page h1 {
 	font-weight: 800;
 }
+
+.category-description {
+	max-width: 48rem;
+	margin-block: 1.5rem 2.5rem;
+	font-size: 1.125rem;
+	white-space: pre-line;
+}
+
+.load-more {
+	text-align: center;
+}
+
+.load-more-button {
+	padding: 0.875rem 1.5rem;
+	border: 0;
+	background: var(--blog-accent);
+	color: #fff;
+	font-weight: 700;
+}
+
+.load-more-button:focus-visible {
+	outline: 3px solid var(--blog-accent);
+	outline-offset: 6px;
+}
+
+.load-more-button:disabled {
+	opacity: 0.6;
+	cursor: wait;
+}
+
+.load-more-error {
+	margin-top: 1rem;
+	color: #a51d42;
+}
+
+.load-more-error:empty {
+	display: none;
+}

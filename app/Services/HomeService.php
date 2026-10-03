@@ -4,43 +4,33 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Article;
 use App\Repositories\CategoryRepository;
+use App\Views\ArticlePresenter;
 
 /** Подготавливает категории и карточки для представления главной. */
 final class HomeService
 {
-	/** @param CategoryRepository $categories Репозиторий категорий. */
-	public function __construct(private readonly CategoryRepository $categories)
-	{
+	/**
+	* @param CategoryRepository $categories Репозиторий категорий.
+	* @param ArticlePresenter $presenter Подготовка карточек статей.
+	*/
+	public function __construct(
+		private readonly CategoryRepository $categories,
+		private readonly ArticlePresenter $presenter,
+	) {
 	}
 
-	/** @return list<array{id: int, name: string, articles: list<array>}> Блоки категорий. */
+	/** @return array<array{id: int, name: string, articles: array<array>}> Блоки категорий. */
 	public function getCategoryBlocks(): array
 	{
 		$blocks = [];
 		foreach ($this->categories->findWithLatestArticles() as $category) {
-			$articles = [];
-			foreach ($category->articles as $article) {
-				$articles[] = $this->articleCard($article);
-			}
-			$blocks[] = ["id" => $category->id, "name" => $category->name, "articles" => $articles];
+			$blocks[] = [
+				"id" => $category->id,
+				"name" => $category->name,
+				"articles" => $this->presenter->presentMany($category->articles),
+			];
 		}
 		return $blocks;
-	}
-
-	/**
-	* @param Article $article Статья с датой публикации.
-	* @return array{id: int, image: string, title: string, date: string, datetime: string} Данные карточки.
-	*/
-	private function articleCard(Article $article): array
-	{
-		return [
-			"id" => $article->id,
-			"image" => $article->image,
-			"title" => $article->title,
-			"date" => $article->publishedAt->format("d.m.Y"),
-			"datetime" => $article->publishedAt->toIso8601String(),
-		];
 	}
 }
