@@ -1,0 +1,19 @@
+{
+	"name": "abelo/blog",
+	"description": "Учебный блог на PHP, MySQL и Smarty без фреймворков",
+	"type": "project",
+	"license": "proprietary",
+	"require": {
+		"php": "^8.4",
+		"ext-mbstring": "*",
+		"ext-pdo": "*",
+		"ext-pdo_mysql": "*",
+		"smarty/smarty": "^5.0"
+	},
+	"config": {
+		"sort-packages": true,
+		"platform": {
+			"php": "8.4.0"
+		}
+	}
+}

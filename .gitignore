@@ -1,0 +1,12 @@
+/.env
+/vendor/
+/node_modules/
+/public/build/
+/var/smarty/*
+!/var/smarty/.gitkeep
+/.idea/
+/.aws/
+/.codex/
+/.agents/
+/.ai-factory.json
+*.log

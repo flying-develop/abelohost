@@ -1,0 +1,16 @@
+@use "bootstrap/scss/bootstrap";
+
+body {
+	background-color: #f5f7fb;
+}
+
+.scaffold-logo {
+	width: 64px;
+	height: 64px;
+	background: url("../images/logo.svg") center / contain no-repeat;
+}
+
+.scaffold-card {
+	max-width: 720px;
+	margin-inline: auto;
+}

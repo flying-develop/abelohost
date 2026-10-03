@@ -1,0 +1,12 @@
+.git
+.env
+.aws
+.codex
+.agents
+.idea
+.ai-factory.json
+vendor
+node_modules
+public/build
+var/smarty
+*.log
