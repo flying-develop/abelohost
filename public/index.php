@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Controllers\ArticleController;
 use App\Controllers\CategoryController;
 use App\Controllers\HomeController;
 use App\Database\ConnectionFactory;
 use App\Repositories\ArticleRepository;
 use App\Repositories\CategoryRepository;
+use App\Services\ArticleService;
 use App\Services\CategoryService;
 use App\Services\HomeService;
 use App\Views\ArticlePresenter;
@@ -28,7 +30,8 @@ try {
 	$path = parse_url($_SERVER["REQUEST_URI"] ?? "/", PHP_URL_PATH);
 	$isHome = in_array($path, ["/", "/index.php"], true);
 	$isCategory = is_string($path) && preg_match("~^/categories/([^/]+)(/articles)?$~D", $path, $route) === 1;
-	if (!$isHome && !$isCategory) {
+	$isArticle = is_string($path) && preg_match("~^/articles/([^/]+)$~D", $path, $articleRoute) === 1;
+	if (!$isHome && !$isCategory && !$isArticle) {
 		http_response_code(404);
 		echo $view->render("not-found.tpl", ["pageTitle" => "Страница не найдена"]);
 		return;
@@ -45,6 +48,11 @@ try {
 	if ($isHome) {
 		$controller = new HomeController(new HomeService($categories, $presenter), $view);
 		echo $controller->index();
+		return;
+	}
+	if ($isArticle) {
+		$controller = new ArticleController(new ArticleService($articles, $categories, $presenter), $view);
+		echo $controller->show($articleRoute[1], $_SERVER["REQUEST_METHOD"] ?? "GET");
 		return;
 	}
 	$service = new CategoryService($categories, $articles, $presenter);

@@ -48,6 +48,25 @@ final class CategoryRepository
 		return $row === false ? null : new Category((int) $row["id"], $row["name"], [], $row["description"]);
 	}
 
+	/**
+	* @param int $articleId Идентификатор статьи.
+	* @return array<Category> Категории статьи в порядке идентификаторов.
+	*/
+	public function findByArticle(int $articleId): array
+	{
+		$statement = $this->connection->prepare(
+			"SELECT c.id, c.name, c.description FROM categories AS c "
+			. "INNER JOIN article_categories AS ac ON ac.category_id = c.id WHERE ac.article_id = :article ORDER BY c.id"
+		);
+		$statement->bindValue(":article", $articleId, PDO::PARAM_INT);
+		$statement->execute();
+		$categories = [];
+		foreach ($statement as $row) {
+			$categories[] = new Category((int) $row["id"], $row["name"], [], $row["description"]);
+		}
+		return $categories;
+	}
+
 	/** @return string Запрос с ограничением числа статей внутри каждой категории. */
 	private function latestArticlesSql(): string
 	{
